@@ -75,16 +75,24 @@
 
     <div class="mb-3">
         <label>Catégorie</label>
-        <select name="category_id" class="form-control">
+        <input type="text" name="category_name" list="categories-list" class="form-control"
+               value="{{ old('category_name') }}" placeholder="Ex : SUV, Peugeot 208, Luxe...">
+        <datalist id="categories-list">
             @foreach($categories as $category)
-                <option value="{{ $category->id }}">{{ $category->nom }}</option>
+                <option value="{{ $category->nom }}">
             @endforeach
-        </select>
+        </datalist>
     </div>
 
     <div class="mb-3">
-        <label>Photo du véhicule</label>
+        <label>Photo principale du véhicule</label>
         <input type="file" name="image" class="form-control" accept="image/*">
+    </div>
+
+    <div class="mb-3">
+        <label>Photos supplémentaires (galerie)</label>
+        <input type="file" name="images[]" class="form-control" accept="image/*" multiple>
+        <small class="text-muted">Vous pouvez sélectionner plusieurs images à la fois (Ctrl + clic).</small>
     </div>
 
     <button type="submit" class="btn btn-primary">Enregistrer</button>

@@ -66,19 +66,19 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const banner = document.getElementById('cookie-banner');
-    const consent = localStorage.getItem('cookie_consent');
+    const consent = sessionStorage.getItem('cookie_consent');
 
     if (!consent) {
         banner.style.display = 'block';
     }
 
     document.getElementById('cookie-accept').addEventListener('click', function () {
-        localStorage.setItem('cookie_consent', 'accepted');
+        sessionStorage.setItem('cookie_consent', 'accepted');
         banner.style.display = 'none';
     });
 
     document.getElementById('cookie-refuse').addEventListener('click', function () {
-        localStorage.setItem('cookie_consent', 'refused');
+        sessionStorage.setItem('cookie_consent', 'refused');
         banner.style.display = 'none';
     });
 });

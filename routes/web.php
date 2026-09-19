@@ -22,7 +22,7 @@ Route::get('/catalogue', [VehiculeController::class, 'catalogue'])->name('catalo
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', function () {
+    Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         if (auth()->user()->role === 'admin') {
             return redirect()->route('admin.documents.index');
         }
@@ -35,7 +35,23 @@ Route::middleware(['auth'])->group(function () {
             ->get();
         $enCours = $reservations->whereIn('statut', ['en_attente', 'payee', 'confirmee'])->count();
         $derniere = $reservations->first();
-        return view('buyer.dashboard', compact('reservations', 'enCours', 'derniere'));
+
+        $query = \App\Models\Vehicule::with(['categorie', 'reservations' => function ($q) {
+            $q->whereIn('statut', ['en_attente', 'confirmee']);
+        }])->where('disponibilite', true);
+
+        if ($request->filled('marque')) {
+            $query->where('marque', 'like', '%' . $request->marque . '%');
+        }
+        if ($request->filled('modele')) {
+            $query->where('modele', 'like', '%' . $request->modele . '%');
+        }
+        if ($request->filled('prix_max')) {
+            $query->where('prix_par_jour', '<=', $request->prix_max);
+        }
+        $vehicules = $query->latest()->get();
+
+        return view('buyer.dashboard', compact('reservations', 'enCours', 'derniere', 'vehicules'));
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

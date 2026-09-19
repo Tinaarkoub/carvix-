@@ -113,6 +113,11 @@
             margin-bottom: 6px;
         }
 
+        .required-star {
+            color: #c1121f;
+            margin-left: 3px;
+        }
+
         input, select {
             width: 100%;
             border: 1px solid #d8ddd4;
@@ -135,7 +140,36 @@
             margin-bottom: 14px;
         }
 
-        button {
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-right: 44px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            width: auto;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #5c6b57;
+            font-weight: 600;
+        }
+
+        .toggle-password:hover {
+            background: none;
+            color: #20291f;
+        }
+
+        button[type="submit"] {
             width: 100%;
             background: #232a24;
             color: #fff;
@@ -148,7 +182,7 @@
             margin-top: 8px;
         }
 
-        button:hover {
+        button[type="submit"]:hover {
             background: #333d33;
         }
 
@@ -199,19 +233,19 @@
             <form method="POST" action="{{ route('register') }}">
                 @csrf
 
-                <label for="name">Nom</label>
+                <label for="name">Nom<span class="required-star">*</span></label>
                 <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="Votre nom">
                 @if($errors->get('name'))
                     <div class="field-error">{{ $errors->first('name') }}</div>
                 @endif
 
-                <label for="email">Email</label>
+                <label for="email">Email<span class="required-star">*</span></label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" placeholder="vous@email.com">
                 @if($errors->get('email'))
                     <div class="field-error">{{ $errors->first('email') }}</div>
                 @endif
 
-                <label for="role">Je suis un(e)</label>
+                <label for="role">Je suis un(e)<span class="required-star">*</span></label>
                 <select id="role" name="role" required>
                     <option value="">-- Choisir --</option>
                     <option value="client" {{ old('role') === 'client' ? 'selected' : '' }}>Client</option>
@@ -221,14 +255,20 @@
                     <div class="field-error">{{ $errors->first('role') }}</div>
                 @endif
 
-                <label for="password">Mot de passe</label>
-                <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="••••••••">
+                <label for="password">Mot de passe<span class="required-star">*</span></label>
+                <div class="password-wrap">
+                    <input id="password" type="password" name="password" required autocomplete="new-password" placeholder="••••••••">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password', this)">Afficher</button>
+                </div>
                 @if($errors->get('password'))
                     <div class="field-error">{{ $errors->first('password') }}</div>
                 @endif
 
-                <label for="password_confirmation">Confirmer le mot de passe</label>
-                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••">
+                <label for="password_confirmation">Confirmer le mot de passe<span class="required-star">*</span></label>
+                <div class="password-wrap">
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation', this)">Afficher</button>
+                </div>
                 @if($errors->get('password_confirmation'))
                     <div class="field-error">{{ $errors->first('password_confirmation') }}</div>
                 @endif
@@ -243,6 +283,19 @@
     </div>
 
 </div>
+
+<script>
+    function togglePassword(fieldId, btn) {
+        const input = document.getElementById(fieldId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = 'Masquer';
+        } else {
+            input.type = 'password';
+            btn.textContent = 'Afficher';
+        }
+    }
+</script>
 
 </body>
 </html>

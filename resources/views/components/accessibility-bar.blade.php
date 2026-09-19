@@ -2,6 +2,7 @@
     <button id="font-decrease" type="button" title="Réduire le texte">A-</button>
     <button id="font-reset" type="button" title="Taille normale">A</button>
     <button id="font-increase" type="button" title="Agrandir le texte">A+</button>
+    <button id="read-aloud" type="button" title="Lire la page à voix haute">🔊</button>
 </div>
 
 <style>
@@ -63,6 +64,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('font-reset').addEventListener('click', function () {
         applyScale(100);
+    });
+
+    // --- Lecture à voix haute ---
+    const readButton = document.getElementById('read-aloud');
+    let isReading = false;
+
+    readButton.addEventListener('click', function () {
+        if (isReading) {
+            window.speechSynthesis.cancel();
+            isReading = false;
+            readButton.textContent = '🔊';
+            return;
+        }
+
+        const mainContent = document.querySelector('main') || document.body;
+        const text = mainContent.innerText;
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+
+        utterance.onend = function () {
+            isReading = false;
+            readButton.textContent = '🔊';
+        };
+
+        window.speechSynthesis.speak(utterance);
+        isReading = true;
+        readButton.textContent = '⏹️';
     });
 });
 </script>

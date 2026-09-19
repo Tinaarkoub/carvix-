@@ -225,7 +225,7 @@
         <div class="links">
             <a href="{{ route('home') }}">Accueil</a>
             <a href="{{ route('catalogue.index') }}">Catalogue</a>
-            <a href="mailto:carvixcarvix@gmail.com">Contacter l'administration</a>
+            <a href="mailto:carvixcarvix@gmail.com">Contactez-nous</a>
         </div>
         <div class="actions">
             @auth
@@ -259,10 +259,6 @@
     <div class="filter-item">
         <div class="field-label">🚘 Modèle</div>
         <input type="text" name="modele" placeholder="Ex: 208" class="filter-input">
-    </div>
-    <div class="filter-item">
-        <div class="field-label">📅 Mise en circulation min.</div>
-        <input type="date" name="date_mise_en_circulation" class="filter-input">
     </div>
     <div class="filter-item">
         <div class="field-label">💶 Prix max / jour</div>

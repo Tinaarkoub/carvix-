@@ -14,6 +14,8 @@
         --pill-dark-hover:#333d33;
         --card-bg:#ffffff;
         --accent:#f2a154;
+        --tag-bg:#eef1ea;
+        --tag-text:#3b6d11;
     }
 
     .catalogue-wrap{
@@ -156,10 +158,21 @@
         font-size:12px;
         color:var(--text-muted);
         margin:6px 0 12px;
+        display:flex;
+        flex-wrap:wrap;
+        gap:6px 12px;
+        align-items:center;
     }
 
     .car-specs span{
-        margin-right:10px;
+        white-space:nowrap;
+    }
+
+    .car-specs .tag-extra{
+        background:var(--tag-bg);
+        color:var(--tag-text);
+        padding:2px 8px;
+        border-radius:6px;
     }
 
     .btn-pill-dark{
@@ -238,6 +251,56 @@
     .flatpickr-day.today {
         border-color: var(--accent) !important;
     }
+
+    .gallery-grid{
+        display:grid;
+        grid-template-columns:2fr 1fr;
+        gap:3px;
+        height:180px;
+        overflow:hidden;
+    }
+
+    .gallery-main{
+        height:100%;
+    }
+
+    .gallery-main img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+    }
+
+    .gallery-side{
+        display:grid;
+        grid-template-rows:1fr 1fr;
+        gap:3px;
+    }
+
+    .gallery-side-item{
+        position:relative;
+        height:100%;
+        overflow:hidden;
+    }
+
+    .gallery-side-item img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        display:block;
+    }
+
+    .gallery-overlay{
+        position:absolute;
+        inset:0;
+        background:rgba(0,0,0,.55);
+        color:#fff;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:12px;
+        font-weight:600;
+    }
 </style>
 
 <div class="catalogue-wrap">
@@ -268,22 +331,17 @@
 
     <form action="{{ route('catalogue.index') }}" method="GET" class="filter-bar">
         <div class="row g-3 align-items-end">
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4">
                 <div class="field-label">🚗 Marque</div>
                 <input type="text" name="marque" placeholder="Ex: Peugeot" value="{{ request('marque') }}">
             </div>
 
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4">
                 <div class="field-label">🚘 Modèle</div>
                 <input type="text" name="modele" placeholder="Ex: 208" value="{{ request('modele') }}">
             </div>
 
-            <div class="col-6 col-md-3">
-                <div class="field-label">📅 Mise en circulation min.</div>
-                <input type="date" name="date_mise_en_circulation" value="{{ request('date_mise_en_circulation') }}">
-            </div>
-
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-4">
                 <div class="field-label">💶 Prix max / jour</div>
                 <input type="number" name="prix_max" min="1" step="1" placeholder="Ex: 100" value="{{ request('prix_max') }}">
             </div>
@@ -305,16 +363,30 @@
                 <div class="col-md-4">
                     <div class="card h-100">
 
-                        @if($vehicule->image)
-                            <img src="{{ asset('storage/'.$vehicule->image) }}"
-                                 class="card-img-top"
-                                 alt="{{ $vehicule->nom }}">
-                        @else
-                            <div class="d-flex align-items-center justify-content-center bg-light"
-                                 style="height:180px;">
-                                <span class="text-muted">Aucune image</span>
+                        <div class="gallery-grid">
+                            <div class="gallery-main">
+                                @if($vehicule->image)
+                                    <img src="{{ asset('storage/'.$vehicule->image) }}" alt="{{ $vehicule->nom }}">
+                                @else
+                                    <div class="d-flex align-items-center justify-content-center bg-light h-100">
+                                        <span class="text-muted">Aucune image</span>
+                                    </div>
+                                @endif
                             </div>
-                        @endif
+
+                            @if($vehicule->images->count())
+                                <div class="gallery-side">
+                                    @foreach($vehicule->images->take(2) as $index => $img)
+                                        <div class="gallery-side-item">
+                                            <img src="{{ asset('storage/'.$img->chemin) }}" alt="Photo supplémentaire">
+                                            @if($index === 1 && $vehicule->images->count() > 2)
+                                                <div class="gallery-overlay">+{{ $vehicule->images->count() - 2 }} photos</div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
 
                         <div class="card-body">
 
@@ -326,6 +398,12 @@
                                 @endif
                                 <span>⛽ {{ $vehicule->carburant }}</span>
                                 <span>⚙️ {{ $vehicule->transmission }}</span>
+                                @if($vehicule->immatriculation)
+                                    <span class="tag-extra">🔖 {{ $vehicule->immatriculation }}</span>
+                                @endif
+                                @if($vehicule->kilometrage !== null)
+                                    <span class="tag-extra">🛣️ {{ number_format($vehicule->kilometrage, 0, ',', ' ') }} km</span>
+                                @endif
                             </div>
 
                             <div class="price mb-2">
@@ -334,7 +412,6 @@
 
                             @auth
                                 @if(Auth::user()->role === 'client')
-
                                     @php
                                         $disabledRanges = $vehicule->reservations->map(function ($r) {
                                             return [
@@ -389,7 +466,7 @@
         @else
 
             <div class="empty-state">
-                @if(request()->hasAny(['marque', 'modele', 'date_mise_en_circulation', 'prix_max']))
+                @if(request()->hasAny(['marque', 'modele', 'prix_max']))
                     <h3>😕 Aucun véhicule ne correspond à votre recherche</h3>
                     <p>Essayez de modifier ou de réinitialiser vos critères de recherche.</p>
                     <a href="{{ route('catalogue.index') }}" class="btn-pill-dark" style="border:none; margin-top:10px;">

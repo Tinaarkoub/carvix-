@@ -17,7 +17,6 @@ class Vehicule extends Model
         'marque',
         'modele',
         'immatriculation',
-        'date_mise_en_circulation',
         'kilometrage',
         'prix_par_jour',
         'carburant',
@@ -32,7 +31,6 @@ class Vehicule extends Model
         'disponibilite' => 'boolean',
         'prix_par_jour' => 'float',
         'kilometrage' => 'integer',
-        'date_mise_en_circulation' => 'date',
     ];
 
     public function categorie()
@@ -48,5 +46,10 @@ class Vehicule extends Model
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(VehiculeImage::class);
     }
 }

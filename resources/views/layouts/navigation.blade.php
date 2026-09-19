@@ -1,27 +1,27 @@
-<div style="background:#cfdccb; border-radius:24px; margin:20px; padding:18px 32px; display:flex; justify-content:space-between; align-items:center; font-family:Arial,Helvetica,sans-serif;">
 
+Navigation.blade · PHP
+<div style="background:#cfdccb; border-radius:24px; margin:20px; padding:18px 32px; display:flex; justify-content:space-between; align-items:center; font-family:Arial,Helvetica,sans-serif;">
+ 
     <a href="{{ route('home') }}" style="font-weight:bold; font-size:20px; color:#20291f; text-decoration:none;">
         carvix
     </a>
-
+ 
     <div style="display:flex; gap:28px; align-items:center;">
         <a href="{{ route('home') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Accueil</a>
-
+ 
         @auth
             @if(Auth::user()->role === 'admin')
                 <a href="{{ route('admin.dashboard') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Dashboard admin</a>
                 <a href="{{ route('categories.index') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Catégories</a>
             @endif
-
+ 
             @if(Auth::user()->role === 'proprietaire')
-                <a href="{{ route('seller.dashboard') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Dashboard</a>
                 <a href="{{ route('seller.products') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Mes véhicules</a>
             @endif
-
+ 
             @if(Auth::user()->role === 'client')
-                <a href="{{ route('catalogue.index') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Catalogue</a>
                 <a href="{{ route('orders.my') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px;">Mes réservations</a>
-
+ 
                 <a href="{{ route('documents.show') }}" style="color:#20291f; text-decoration:none; opacity:.85; font-size:15px; position:relative;">
                     Mes documents
                     @if(Auth::user()->statut_documents === 'non_soumis' || Auth::user()->statut_documents === 'refuse')
@@ -35,7 +35,7 @@
             @endif
         @endauth
     </div>
-
+ 
     <div style="display:flex; gap:12px; align-items:center;">
         @auth
             <span style="color:#20291f; font-size:14px; opacity:.75;">{{ Auth::user()->name }}</span>
@@ -54,5 +54,6 @@
             </a>
         @endauth
     </div>
-
+ 
 </div>
+ 

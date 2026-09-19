@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DocumentsValidesMail;
 
 class AdminDocumentController extends Controller
 {
@@ -44,6 +46,8 @@ class AdminDocumentController extends Controller
             'motif_refus' => null,
             'documents_valides_at' => now(),
         ]);
+
+        Mail::to($user->email)->send(new DocumentsValidesMail($user));
 
         return redirect()
             ->route('admin.documents.index')
